@@ -1,18 +1,16 @@
-const express = require('express')
-const mongoose = require('mongoose')
-const cors = require('cors')
-const UserModel = require("./models/Users")
-const RegisterModel = require("./models/NewUser")
-const TaskModel = require("./models/Task")
+require('dotenv').config();
+const express = require('express');
+const mongoose = require('mongoose');
+const cors = require('cors');
+const UserModel = require('./models/Users');
+const RegisterModel = require('./models/NewUser');
+const TaskModel = require('./models/Task');
 
+const app = express();
+app.use(cors());
+app.use(express.json());
 
-
-const app = express()
-app.use(cors())
-app.use(express.json())
-
-mongoose.connect('mongodb+srv://gururajk:guru123@cluster0.4uu67a5.mongodb.net/merncrud');
-
+mongoose.connect(process.env.MONGO_CONNECTION, { useNewUrlParser: true, useUnifiedTopology: true });
 
 const db = mongoose.connection;
 
