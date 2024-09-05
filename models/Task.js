@@ -4,7 +4,8 @@ const TaskSchema = new mongoose.Schema({
     mname:String,
     title:String,
     descri:String,
-    deadline:String
+    deadline:String,
+    filePath: String
 })
 
 const TaskModel = mongoose.model("tasks", TaskSchema)
