@@ -49,6 +49,7 @@ app.get('/getTask/:id',(req,res)=>{
 app.put("/updateTask/:id", (req,res)=>{
     const id = req.params.id;
     TaskModel.findByIdAndUpdate({_id:id},{
+        mname:req.body.mname,
         title:req.body.title,
         descri:req.body.descri,
         deadline:req.body.deadline
