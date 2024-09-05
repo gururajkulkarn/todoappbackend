@@ -3,6 +3,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
 const UserModel = require('./models/Users');
+const multer = require('multer');
 const RegisterModel = require('./models/NewUser');
 const TaskModel = require('./models/Task');
 
@@ -22,6 +23,20 @@ db.once('open', () => {
     console.log('Database connected');
 });
 
+// Configure multer for file uploads
+const storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+      cb(null, 'uploads/') // Directory where files will be saved
+    },
+    filename: (req, file, cb) => {
+      cb(null, Date.now() + path.extname(file.originalname)) // Unique filename
+    }
+  });
+  
+  const upload = multer({ storage: storage });
+  
+
+
 app.get('/', (req,res)=>{
     TaskModel.find({})
     .then(tasks => res.json(tasks))
@@ -31,11 +46,40 @@ app.get('/', (req,res)=>{
 // TASK MANAGEMENT PROJECT
 
 
-app.post("/createTask", (req,res) => {
-    TaskModel.create(req.body)
-    .then(users => res.json(users))
- .catch(err => res.json(err))
-})
+// app.post("/createTask", (req,res) => {
+//     TaskModel.create(req.body)
+//     .then(users => res.json(users))
+//  .catch(err => res.json(err))
+// })
+
+
+
+// POST endpoint for creating tasks
+app.post('/createTask', upload.single('file'), async (req, res) => {
+    try {
+      const { mname, title, descri, deadline } = req.body;
+      const filePath = req.file ? req.file.path : '';
+  
+      // Create a new Task document
+      const newTask = new Task({
+        mname,
+        title,
+        descri,
+        deadline,
+        filePath
+      });
+  
+      // Save the task to the database
+      await newTask.save();
+  
+      res.status(201).json({ message: 'Task created successfully!' });
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ message: 'Failed to create task.' });
+    }
+  });
+
+
 
 
 app.get('/getTask/:id',(req,res)=>{
